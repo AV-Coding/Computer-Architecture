@@ -20,12 +20,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Control(Instruction, RegWrite, ALUInstruction, InputA_MuxSignal, InputB_MuxSignal, RegDst, signExtendSignal);
+module Control(Instruction, RegWrite, ALUInstruction, InputA_MuxSignal, InputB_MuxSignal, RegDst, signExtendSignal, MemWrite, MemRead, Branch, MemToReg);
 input [31:0] Instruction;
 reg [5:0] OpCode;
 reg [5:0] Funct;
 reg [4:0] Special;
-output reg RegDst;
+output reg RegDst, MemWrite, MemRead, Branch, MemToReg;
 output reg signExtendSignal; //used for signextending 0's in logical xori,ori,andi
 output reg [4:0] ALUInstruction;
 output reg RegWrite, InputA_MuxSignal, InputB_MuxSignal;
@@ -34,8 +34,8 @@ always @(Instruction) begin
 	Special=Instruction[10:6]; //check seh
 	OpCode= Instruction [31:26];
 	Funct=Instruction[5:0];
-	//Start of Arithmetic Controls//
-
+	
+	/* Start of Arithmetic, Logical and HI/LO */
     if((OpCode == 'b000000) && (Funct == 'b100000))//ADD 
         begin
         RegWrite = 1;
@@ -44,6 +44,7 @@ always @(Instruction) begin
 		ALUInstruction = 'b00000;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
         end
     else if(OpCode == 'b001000)//ADDI 
         begin
@@ -53,6 +54,7 @@ always @(Instruction) begin
 		ALUInstruction = 'b00000;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
         end
 	else if(OpCode=='b001001)//ADDIU							
 		begin
@@ -62,6 +64,7 @@ always @(Instruction) begin
 		ALUInstruction = 'b10111;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b00000)&&(Funct=='b100010))//SUB 
 		begin
@@ -71,6 +74,7 @@ always @(Instruction) begin
 		ALUInstruction='b00001;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100100))//AND
 		begin
@@ -80,6 +84,7 @@ always @(Instruction) begin
 		ALUInstruction='b00010;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if(OpCode=='b001100)//ANDI
 		begin
@@ -89,6 +94,7 @@ always @(Instruction) begin
 		ALUInstruction='b00010;
         RegDst = 0;
         signExtendSignal=1;
+        MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100101))//OR
 		begin
@@ -98,6 +104,7 @@ always @(Instruction) begin
 		ALUInstruction='b00011;
         RegDst = 1;
         signExtendSignal=0;
+        MemToReg = 1;
 		end
 	else if(OpCode=='b001101)//ORI
 		begin
@@ -107,6 +114,7 @@ always @(Instruction) begin
 		ALUInstruction='b00011;
 		RegDst = 0;
 		signExtendSignal=1;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100111))//NOR
 		begin
@@ -116,6 +124,7 @@ always @(Instruction) begin
 		ALUInstruction='b00100;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100110))//XOR
 		begin
@@ -125,6 +134,7 @@ always @(Instruction) begin
 		ALUInstruction='b00101;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if(OpCode=='b001110)//XORI
 		begin
@@ -134,6 +144,7 @@ always @(Instruction) begin
 		ALUInstruction='b00101;
 		RegDst = 0;
 		signExtendSignal=1;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b011111)&&(Special=='b11000)&&(Funct=='b100000))//SEH
 		begin
@@ -143,6 +154,7 @@ always @(Instruction) begin
 		ALUInstruction='b00110;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000000))//SLL #ask
 		begin
@@ -152,6 +164,7 @@ always @(Instruction) begin
 		ALUInstruction='b00111;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010) && (Instruction[21]=='b0))//SRL #ask
 		begin
@@ -161,6 +174,7 @@ always @(Instruction) begin
 		ALUInstruction='b01000;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000100))//SLLV #ask
 		begin
@@ -170,6 +184,7 @@ always @(Instruction) begin
 		ALUInstruction='b00111;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b0))//SRLV #ask
 		begin
@@ -179,6 +194,7 @@ always @(Instruction) begin
 		ALUInstruction='b01000;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101010))//SLT
 		begin
@@ -188,6 +204,7 @@ always @(Instruction) begin
 		ALUInstruction='b01001;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if(OpCode=='b001010)//SLTI
 		begin
@@ -197,6 +214,7 @@ always @(Instruction) begin
 		ALUInstruction='b01001;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001011))//MOVN
 		begin
@@ -206,6 +224,7 @@ always @(Instruction) begin
 		ALUInstruction='b01010;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001010))//MOVZ
 		begin
@@ -215,6 +234,7 @@ always @(Instruction) begin
 		ALUInstruction='b01011;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b1))//ROTRV
 		begin
@@ -224,6 +244,7 @@ always @(Instruction) begin
 		ALUInstruction='b01100;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010)&&(Instruction[21]=='b1))//ROTR
 		begin
@@ -233,6 +254,7 @@ always @(Instruction) begin
 		ALUInstruction='b01100;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000011))//SRA
 		begin
@@ -242,6 +264,7 @@ always @(Instruction) begin
 		ALUInstruction='b01101;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000111))//SRAV
 		begin
@@ -251,6 +274,7 @@ always @(Instruction) begin
 		ALUInstruction='b01110;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b011111)&&(Funct=='b100000)&&(Special=='b10000))//SEB
 		begin
@@ -260,6 +284,7 @@ always @(Instruction) begin
 		ALUInstruction='b01111;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end	
 	else if(OpCode=='b001011)//SLTIU
 		begin
@@ -269,6 +294,7 @@ always @(Instruction) begin
 		ALUInstruction='b10000;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101011))//SLTU
 		begin
@@ -278,6 +304,7 @@ always @(Instruction) begin
 		ALUInstruction='b10001;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000010))//MUL
 		begin
@@ -287,6 +314,7 @@ always @(Instruction) begin
 		ALUInstruction='b10010;
 		RegDst = 1;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011001))//MULTU
 		begin
@@ -296,6 +324,7 @@ always @(Instruction) begin
 		ALUInstruction='b10011;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000000))//MADD
 		begin
@@ -305,6 +334,7 @@ always @(Instruction) begin
 		InputA_MuxSignal=0;
 		ALUInstruction='b10100;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000100))//MSUB
 		begin
@@ -314,6 +344,7 @@ always @(Instruction) begin
 		InputA_MuxSignal=0;
 		ALUInstruction='b10101;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011000))//MULT
 		begin
@@ -323,6 +354,7 @@ always @(Instruction) begin
 		ALUInstruction='b10110;
 		RegDst = 0;
 		signExtendSignal=0;
+		MemToReg = 1;
 		end
     else if((OpCode=='b000000)&&(Funct=='b100001))//ADDU
         begin
@@ -332,6 +364,7 @@ always @(Instruction) begin
         ALUInstruction = 'b10111;
         RegDst = 0;
         signExtendSignal=0;
+        MemToReg = 1;
         end
 	else if((OpCode=='b000000)&&(Funct=='b010000))//MFHI
         begin
@@ -341,6 +374,7 @@ always @(Instruction) begin
         InputA_MuxSignal=0;
         ALUInstruction='b11011;
         signExtendSignal=0;
+        MemToReg = 1;
         end
     else if((OpCode=='b000000)&&(Funct=='b010010))//MFLO
         begin
@@ -350,6 +384,7 @@ always @(Instruction) begin
         InputA_MuxSignal=0;
         ALUInstruction='b11000;
         signExtendSignal=0;
+        MemToReg = 1;
         end
     else if((OpCode=='b000000)&&(Funct=='b010001))//MTHI
         begin
@@ -359,6 +394,7 @@ always @(Instruction) begin
         InputA_MuxSignal=0;
         ALUInstruction='b11001;
         signExtendSignal=0;
+        MemToReg = 1;
         end
     else if((OpCode=='b000000)&&(Funct=='b010011))//MTLO
         begin
@@ -368,7 +404,119 @@ always @(Instruction) begin
         InputA_MuxSignal=0;
         ALUInstruction='b11010;
         signExtendSignal=0;
+        MemToReg = 1;
         end
+        
+    /* End of Arithmetic, Logical and HI/LO */
+    
+    
+    /* Start of Data */
+    
+    else if(OpCode=='b100011)// load word
+        begin
+        MemRead = 1;
+        MemWrite = 0;
+        MemToReg = 0;
+        
+        end
+    
+    else if(OpCode=='b101011)// store word
+        begin
+        MemRead = 0;
+        MemWrite = 1;
+        MemToReg = 1;
+        
+        end
+    else if(OpCode=='b101000)// store byte
+        begin
+        MemRead = 0;
+        MemWrite = 1;
+        MemToReg = 1;
+        
+        end
+    else if(OpCode=='b100001)// load half
+        begin
+        MemRead = 1;
+        MemWrite = 0;
+        MemToReg = 0;
+        
+        end
+    else if(OpCode=='b100000)// load byte
+        begin
+        MemRead = 1;
+        MemWrite = 0;
+        MemToReg = 0;
+        
+        end
+        
+    else if(OpCode=='b101001)// store half
+        begin
+        MemRead = 0;
+        MemWrite = 1;
+        MemToReg = 1;
+        
+        end
+    
+    else if(OpCode=='b001111)// load upper immediate
+        begin
+        MemRead = 1;
+        MemWrite = 0;
+        MemToReg = 0;
+        
+        end
+    
+    /* End of Data */
+    
+    /* Start of Branch */
+    
+    else if((OpCode=='b000001)&&(Instruction[20:16]=='b00001))  // bgez
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    
+    else if(OpCode=='b000100)   // beq
+        begin
+        Branch = 1;
+        MemToReg = 1;      
+        end
+    
+    else if(OpCode=='b000101)   // bne
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    
+    else if(OpCode=='b000111)   // bgtz
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    else if((OpCode=='b000110)&&(Instruction[20:16]=='b00000))  // blez
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+ 
+    else if(OpCode=='b000010)   //j
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    
+    else if((OpCode=='b000000)&&(Funct=='b001000))  // jr
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    
+    else if(OpCode=='b000011)   // jal
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        end
+    
+    /* End of Branch */
 	
 	end
 endmodule

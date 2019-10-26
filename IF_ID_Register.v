@@ -26,18 +26,12 @@ input [31:0] InstructionIn;
 input [31:0] PCResultIn;
 output reg [31:0] InstructionOut;
 output reg [31:0] PCResultOut;
-reg [31:0] Instruction;
-reg [31:0] PCResult;
+/*reg [31:0] Instruction;
+reg [31:0] PCResult;*/
 
 always @( posedge Clock)
     begin
-    Instruction <= InstructionIn;
-    PCResult <= PCResultIn;
-    end
-
-always @( negedge Clock)
-    begin
-    InstructionOut = Instruction;
-    PCResultOut = PCResult;
+    InstructionOut <= InstructionIn;
+    PCResultOut <= PCResultIn;
     end
 endmodule
