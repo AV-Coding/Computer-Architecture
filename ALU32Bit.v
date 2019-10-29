@@ -28,7 +28,7 @@
 
 module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
 
-	input [4:0] ALUInstruction; // control bits for ALU operation
+	input [5:0] ALUInstruction; // control bits for ALU operation
 	input [31:0] A, B;
 	input [31:0] ALUlo;
 	input [31:0] ALUhi;
@@ -44,35 +44,35 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         case (ALUInstruction)
         
         //ADD,ADDI
-        'b00000:                            
+        'b000000:                            
         begin
         ALUResult = A+B;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //SUB
-        'b00001:
+        'b000001:
         begin
         ALUResult= A-B;    
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //AND (This is a bitwise AND)
-        'b00010:
+        'b000010:
         begin
         ALUResult=A&B;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //OR (This is a bitwise OR)
-        'b00011:
+        'b000011:
         begin
         ALUResult=A|B;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //NOR (This is a bitwise NOR)
-        'b00100:
+        'b000100:
         begin
         tempReg = A|B;
         ALUResult= ~tempReg;
@@ -80,35 +80,35 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //XOR (This is a bitwise XOR)
-        'b00101:
+        'b000101:
         begin
         ALUResult=A^B;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //SEH
-        'b00110:
+        'b000110:
         begin
         ALUResult= {{16{B[15]}}, B[15:0]}; // I think this works, but i'm not sure, will have to test.
         ALUResult2 = {ALUhi, ALUlo};
         end
       
    		//SLL
-        'b00111: //7
+        'b000111: //7
         begin
         ALUResult=B<<A;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //SRL
-        'b01000: //8
+        'b001000: //8
         begin
         ALUResult=B>>A;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //SLT #ask
-        'b01001: //9
+        'b001001: //9
         begin
         if($signed(A)<$signed(B))begin
         ALUResult<=1;
@@ -121,7 +121,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //MOVN
-        'b01010: //10
+        'b001010: //10
         begin
         if(B != 'h00 )begin
             ALUResult = A;
@@ -135,7 +135,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //MOVZ
-        'b01011: //11
+        'b001011: //11
         begin
         if(B=='h00)begin
             ALUResult = A;
@@ -149,7 +149,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //ROTRV,ROTR
-        'b01100: //12
+        'b001100: //12
         begin
         tempReg = (B>>A);
         ALUResultTemp2 = B<<(32-A);
@@ -158,7 +158,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //SRA
-        'b01101: //13
+        'b001101: //13
         begin
         if(B[31]==1)
         begin
@@ -175,21 +175,21 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //SRAV
-        'b01110: //14
+        'b001110: //14
         begin
         ALUResult = B>>>A;
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //SEB
-        'b01111: //15
+        'b001111: //15
         begin
         ALUResult = {{24{B[7]}}, B[7:0]};
         ALUResult2 = {ALUhi, ALUlo};
         end 
         
         //SLTIU
-        'b10000: //16
+        'b010000: //16
         begin
         if($unsigned(A) < $unsigned(B))
         begin
@@ -204,7 +204,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //SLTU
-        'b10001: //17
+        'b010001: //17
         begin
         if($unsigned(A) < $unsigned(B))
         begin
@@ -219,20 +219,20 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //MUL
-        'b10010: //18
+        'b010010: //18
         begin
         ALUResult = A * B;
         ALUResult2 = {ALUhi, ALUlo};
         end  
 
         //MULTU
-        'b10011: //19
+        'b010011: //19
          begin
          ALUResult2 = $unsigned(A)*$unsigned(B);
         end
         
         //MADD
-        'b10100: //20
+        'b010100: //20
         begin
         tempreg2 = {ALUhi, ALUlo};
         ALUResultTemp1 = $signed(tempreg2) + $signed(A)*$signed(B);
@@ -241,7 +241,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end
         
         //MSUB
-        'b10101: //21
+        'b010101: //21
         begin
         //tempreg2 = {ALUhi, ALUlo};
         //ALUResultTemp1 = tempreg2 - $signed(A)*$signed(B);
@@ -251,20 +251,20 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end 
         
         //MULT
-        'b10110: //22
+        'b010110: //22
         begin
         ALUResult2 = $signed(A)*$signed(B);
         end  
         
         //ADDU, ADDIU
-        'b10111:
+        'b010111:
         begin
         ALUResult = $unsigned(A) + $unsigned(B);
         ALUResult2 = {ALUhi, ALUlo};
         end
         
         //MFHI
-        'b11011: //23
+        'b011011: //23
         begin
         ALUResult = ALUhi;
        // ALUResult = 64'h12;
@@ -272,20 +272,20 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         end  
         
         //MFLO
-        'b11000: //24
+        'b011000: //24
         begin
         ALUResult = ALUlo;
         ALUResult2 = {ALUhi, ALUlo};
         end  
         
         //MTHI
-        'b11001: //25
+        'b011001: //25
         begin
         ALUResult2 = {A, ALUlo};
         end  
         
         //MTLO
-        'b11010: //26
+        'b011010: //26
         begin
         ALUResult2 = {ALUhi, A};
         end 

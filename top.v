@@ -45,7 +45,7 @@ module top(Clk, Reset, PCResult, MEMWB_ALUResult, ALUhi, ALUlo);
     wire [31:0] LogicalSignExtendOut;
     //wire [31:0] DelayID_Instruction;
     //wire [31:0] DelayID_PCResult;
-    wire [4:0] ALUInstruction;
+    wire [5:0] ALUInstruction;
     wire RegWrite, RegDst, InputA_MuxSignal, InputB_MuxSignal, SignExtendSignal, MemWrite, MemRead, Branch, MemToReg;
     
     /*Execution Stage Wires*/
@@ -55,7 +55,7 @@ module top(Clk, Reset, PCResult, MEMWB_ALUResult, ALUhi, ALUlo);
     wire [31:0] EX_PCResult;
     output wire [31:0] ALUlo;
     output wire [31:0] ALUhi;
-    wire [4:0] EX_ALUInstruction;
+    wire [5:0] EX_ALUInstruction;
     wire EX_RegWrite, EX_RegDst, EX_InputA_MuxSignal, EX_InputB_MuxSignal, EX_MemWrite, EX_MemRead, EX_Branch, EX_MemToReg;
     wire [31:0] ShiftAmount;
     wire [31:0] WriteRegister;

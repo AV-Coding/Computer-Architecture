@@ -4,7 +4,7 @@ input Clk, RegWriteIn, RegDstIn, InputA_MuxSignalIn, InputB_MuxSignalIn, MemWrit
 input [31:0] ReadData1In;
 input [31:0] ReadData2In;
 input [31:0] SignExtendOutIn;
-input [4:0] ALUInstructionIn;
+input [5:0] ALUInstructionIn;
 input [31:0] PCResultIn;
 input [31:0] InstructionIn;
 
@@ -20,7 +20,7 @@ output reg EX_RegWrite, EX_RegDst, EX_InputA_MuxSignal, EX_InputB_MuxSignal, EX_
 output reg [31:0] EX_ReadData1;
 output reg [31:0] EX_ReadData2;
 output reg [31:0] EX_SignExtendOut;
-output reg [4:0] EX_ALUInstruction;
+output reg [5:0] EX_ALUInstruction;
 output reg [31:0] EX_PCResult;
 output reg [31:0] EX_Instruction;
 

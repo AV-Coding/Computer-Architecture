@@ -41,7 +41,7 @@ always @(Instruction) begin
         RegWrite = 1;
         InputB_MuxSignal = 0;
 		InputA_MuxSignal=0;
-		ALUInstruction = 'b00000;
+		ALUInstruction = 'b000000;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -51,7 +51,7 @@ always @(Instruction) begin
         RegWrite = 1;
         InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
-		ALUInstruction = 'b00000;
+		ALUInstruction = 'b000000;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -61,7 +61,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction = 'b10111;
+		ALUInstruction = 'b010111;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -71,7 +71,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00001;
+		ALUInstruction='b000001;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -81,7 +81,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00010;
+		ALUInstruction='b000010;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -91,7 +91,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00010;
+		ALUInstruction='b000010;
         RegDst = 0;
         signExtendSignal=1;
         MemToReg = 1;
@@ -101,7 +101,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00011;
+		ALUInstruction='b000011;
         RegDst = 1;
         signExtendSignal=0;
         MemToReg = 1;
@@ -111,7 +111,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00011;
+		ALUInstruction='b000011;
 		RegDst = 0;
 		signExtendSignal=1;
 		MemToReg = 1;
@@ -121,7 +121,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00100;
+		ALUInstruction='b000100;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -131,7 +131,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00101;
+		ALUInstruction='b000101;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -141,7 +141,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00101;
+		ALUInstruction='b000101;
 		RegDst = 0;
 		signExtendSignal=1;
 		MemToReg = 1;
@@ -151,7 +151,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00110;
+		ALUInstruction='b000110;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -161,7 +161,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
-		ALUInstruction='b00111;
+		ALUInstruction='b000111;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -171,7 +171,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
-		ALUInstruction='b01000;
+		ALUInstruction='b001000;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -181,7 +181,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b00111;
+		ALUInstruction='b000111;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -191,7 +191,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01000;
+		ALUInstruction='b001000;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -201,7 +201,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01001;
+		ALUInstruction='b001001;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -211,7 +211,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01001;
+		ALUInstruction='b001001;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -221,7 +221,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01010;
+		ALUInstruction='b001010;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -231,7 +231,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01011;
+		ALUInstruction='b001011;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -241,7 +241,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01100;
+		ALUInstruction='b001100;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -251,7 +251,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
-		ALUInstruction='b01100;
+		ALUInstruction='b001100;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -261,7 +261,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
-		ALUInstruction='b01101;
+		ALUInstruction='b001101;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -271,7 +271,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01110;
+		ALUInstruction='b001110;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -281,7 +281,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b01111;
+		ALUInstruction='b001111;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -291,7 +291,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10000;
+		ALUInstruction='b010000;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -301,7 +301,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10001;
+		ALUInstruction='b010001;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -311,7 +311,7 @@ always @(Instruction) begin
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10010;
+		ALUInstruction='b010010;
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -321,7 +321,7 @@ always @(Instruction) begin
 		RegWrite=0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10011;
+		ALUInstruction='b010011;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -332,7 +332,7 @@ always @(Instruction) begin
 		RegDst = 0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10100;
+		ALUInstruction='b010100;
 		signExtendSignal=0;
 		MemToReg = 1;
 		end
@@ -342,7 +342,7 @@ always @(Instruction) begin
 		RegDst = 0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10101;
+		ALUInstruction='b010101;
 		signExtendSignal=0;
 		MemToReg = 1;
 		end
@@ -351,7 +351,7 @@ always @(Instruction) begin
 		RegWrite=0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
-		ALUInstruction='b10110;
+		ALUInstruction='b010110;
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
@@ -361,7 +361,7 @@ always @(Instruction) begin
         RegWrite=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
-        ALUInstruction = 'b10111;
+        ALUInstruction = 'b010111;
         RegDst = 0;
         signExtendSignal=0;
         MemToReg = 1;
@@ -372,7 +372,7 @@ always @(Instruction) begin
         RegDst=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
-        ALUInstruction='b11011;
+        ALUInstruction='b011011;
         signExtendSignal=0;
         MemToReg = 1;
         end
@@ -382,7 +382,7 @@ always @(Instruction) begin
         RegDst=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
-        ALUInstruction='b11000;
+        ALUInstruction='b011000;
         signExtendSignal=0;
         MemToReg = 1;
         end
@@ -392,7 +392,7 @@ always @(Instruction) begin
         RegDst=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
-        ALUInstruction='b11001;
+        ALUInstruction='b011001;
         signExtendSignal=0;
         MemToReg = 1;
         end
@@ -402,7 +402,7 @@ always @(Instruction) begin
         RegDst=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
-        ALUInstruction='b11010;
+        ALUInstruction='b011010;
         signExtendSignal=0;
         MemToReg = 1;
         end

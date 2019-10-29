@@ -8,8 +8,8 @@
 	- [x] Remove delayed components
 		- [x] Removed delayed wires
 		- [x] Remove modules that delay wires
-	- [ ] Connected almost all wires to top for datapath to work in labs 15-18
-		- [ ] Pipeline are being implemented correctly
+	- [x] Connected almost all wires to top for datapath to work in labs 15-18
+		- [x] Pipeline are being implemented correctly
 	- [ ] Add `AND` module for branch to execute correctly.
 	- [ ] Implement `jump` instructions
 		- [ ] Create another `ADDER` in Execution stage for `jump` instrucitons.
