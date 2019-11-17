@@ -30,7 +30,7 @@ wire [31:0] Result, PC, LO, HI;
 top Test(
     .Clk(Clk),
     .Reset(Reset),
-    .MEMWB_ALUResult(Result),
+    .MEMWB_DataResult(Result),
     .PCResult(PC),
     .ALUlo(LO),
     .ALUhi(HI)

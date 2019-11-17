@@ -20,15 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Control(Instruction, RegWrite, ALUInstruction, InputA_MuxSignal, InputB_MuxSignal, RegDst, signExtendSignal, MemWrite, MemRead, Branch, MemToReg);
+module Control(Instruction, RegWrite, ALUInstruction, InputA_MuxSignal, InputB_MuxSignal, RegDst, signExtendSignal, MemWrite, MemRead, Branch, MemToReg, PCAdder_MuxSignal, jal_signal, JumpReturnSignal);
 input [31:0] Instruction;
 reg [5:0] OpCode;
 reg [5:0] Funct;
 reg [4:0] Special;
-output reg RegDst, MemWrite, MemRead, Branch, MemToReg;
+output reg [1:0] MemWrite, MemRead;
+output reg RegDst, Branch, MemToReg, jal_signal;
 output reg signExtendSignal; //used for signextending 0's in logical xori,ori,andi
-output reg [4:0] ALUInstruction;
-output reg RegWrite, InputA_MuxSignal, InputB_MuxSignal;
+output reg [5:0] ALUInstruction;
+output reg RegWrite, InputA_MuxSignal, InputB_MuxSignal, PCAdder_MuxSignal, JumpReturnSignal;
 
 always @(Instruction) begin
 	Special=Instruction[10:6]; //check seh
@@ -45,6 +46,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if(OpCode == 'b001000)//ADDI 
         begin
@@ -55,6 +59,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
 	else if(OpCode=='b001001)//ADDIU							
 		begin
@@ -65,6 +72,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b00000)&&(Funct=='b100010))//SUB 
 		begin
@@ -75,6 +85,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100100))//AND
 		begin
@@ -85,6 +98,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if(OpCode=='b001100)//ANDI
 		begin
@@ -95,6 +111,9 @@ always @(Instruction) begin
         RegDst = 0;
         signExtendSignal=1;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100101))//OR
 		begin
@@ -105,6 +124,9 @@ always @(Instruction) begin
         RegDst = 1;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
 		end
 	else if(OpCode=='b001101)//ORI
 		begin
@@ -115,6 +137,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=1;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100111))//NOR
 		begin
@@ -125,6 +150,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100110))//XOR
 		begin
@@ -135,6 +163,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if(OpCode=='b001110)//XORI
 		begin
@@ -145,6 +176,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=1;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b011111)&&(Special=='b11000)&&(Funct=='b100000))//SEH
 		begin
@@ -155,6 +189,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000000))//SLL #ask
 		begin
@@ -165,6 +202,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010) && (Instruction[21]=='b0))//SRL #ask
 		begin
@@ -175,6 +215,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000100))//SLLV #ask
 		begin
@@ -185,6 +228,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b0))//SRLV #ask
 		begin
@@ -195,6 +241,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101010))//SLT
 		begin
@@ -205,6 +254,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if(OpCode=='b001010)//SLTI
 		begin
@@ -215,6 +267,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001011))//MOVN
 		begin
@@ -225,6 +280,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001010))//MOVZ
 		begin
@@ -235,6 +293,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b1))//ROTRV
 		begin
@@ -245,6 +306,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010)&&(Instruction[21]=='b1))//ROTR
 		begin
@@ -255,6 +319,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000011))//SRA
 		begin
@@ -265,6 +332,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000111))//SRAV
 		begin
@@ -275,6 +345,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b011111)&&(Funct=='b100000)&&(Special=='b10000))//SEB
 		begin
@@ -285,6 +358,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end	
 	else if(OpCode=='b001011)//SLTIU
 		begin
@@ -295,6 +371,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101011))//SLTU
 		begin
@@ -305,6 +384,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000010))//MUL
 		begin
@@ -315,6 +397,9 @@ always @(Instruction) begin
 		RegDst = 1;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011001))//MULTU
 		begin
@@ -325,6 +410,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000000))//MADD
 		begin
@@ -335,6 +423,9 @@ always @(Instruction) begin
 		ALUInstruction='b010100;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000100))//MSUB
 		begin
@@ -345,6 +436,9 @@ always @(Instruction) begin
 		ALUInstruction='b010101;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011000))//MULT
 		begin
@@ -355,6 +449,9 @@ always @(Instruction) begin
 		RegDst = 0;
 		signExtendSignal=0;
 		MemToReg = 1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
 		end
     else if((OpCode=='b000000)&&(Funct=='b100001))//ADDU
         begin
@@ -365,6 +462,9 @@ always @(Instruction) begin
         RegDst = 0;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
 	else if((OpCode=='b000000)&&(Funct=='b010000))//MFHI
         begin
@@ -375,6 +475,9 @@ always @(Instruction) begin
         ALUInstruction='b011011;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if((OpCode=='b000000)&&(Funct=='b010010))//MFLO
         begin
@@ -385,6 +488,9 @@ always @(Instruction) begin
         ALUInstruction='b011000;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if((OpCode=='b000000)&&(Funct=='b010001))//MTHI
         begin
@@ -395,6 +501,9 @@ always @(Instruction) begin
         ALUInstruction='b011001;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if((OpCode=='b000000)&&(Funct=='b010011))//MTLO
         begin
@@ -405,118 +514,268 @@ always @(Instruction) begin
         ALUInstruction='b011010;
         signExtendSignal=0;
         MemToReg = 1;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
         
     /* End of Arithmetic, Logical and HI/LO */
-    
+
+//next part of lab^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
     
     /* Start of Data */
     
     else if(OpCode=='b100011)// load word
         begin
-        MemRead = 1;
+        MemRead = 2'b01;
         MemWrite = 0;
         MemToReg = 0;
-        
+        RegWrite = 1;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     
     else if(OpCode=='b101011)// store word
         begin
         MemRead = 0;
-        MemWrite = 1;
+        MemWrite = 2'b01;
         MemToReg = 1;
-        
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+        Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if(OpCode=='b101000)// store byte
         begin
         MemRead = 0;
-        MemWrite = 1;
+        MemWrite = 2'b11;
         MemToReg = 1;
-        
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if(OpCode=='b100001)// load half
         begin
-        MemRead = 1;
+        MemRead = 2'b10;
         MemWrite = 0;
         MemToReg = 0;
-        
+        RegWrite = 1;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     else if(OpCode=='b100000)// load byte
         begin
-        MemRead = 1;
+        MemRead = 2'b11;
         MemWrite = 0;
         MemToReg = 0;
-        
+        RegWrite = 1;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
         
     else if(OpCode=='b101001)// store half
         begin
         MemRead = 0;
-        MemWrite = 1;
+        MemWrite = 2'b10;
         MemToReg = 1;
-        
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100100;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
         end
     
     else if(OpCode=='b001111)// load upper immediate
         begin
         MemRead = 1;
         MemWrite = 0;
-        MemToReg = 0;
+        MemToReg = 1;
+        RegWrite = 1;
+        InputB_MuxSignal = 1;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100001;
+		RegDst = 0;
+		signExtendSignal=1;
+		Branch=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         
         end
     
     /* End of Data */
     
-    /* Start of Branch */
+    /* Start of Branch Instructions */
     
     else if((OpCode=='b000001)&&(Instruction[20:16]=='b00001))  // bgez
         begin
         Branch = 1;
         MemToReg = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100000;
+		RegDst = 0;
+		signExtendSignal=0;
+		PCAdder_MuxSignal = 1;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
+        
+    else if((OpCode=='b000001)&&(Instruction[20:16]=='b00000))  // BLTZ
+        begin
+        Branch = 1;
+        MemToReg = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+        InputA_MuxSignal=0;
+        ALUInstruction = 'b100101;
+        RegDst = 0;
+        signExtendSignal=0;
+        PCAdder_MuxSignal = 1;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
+        end 
     
     else if(OpCode=='b000100)   // beq
         begin
         Branch = 1;
-        MemToReg = 1;      
+        MemToReg = 1;   
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		PCAdder_MuxSignal = 1;
+		ALUInstruction = 'b011100;
+		RegDst = 0;
+		signExtendSignal=0;
+		jal_signal = 0;  
+		JumpReturnSignal = 0;
         end
     
     else if(OpCode=='b000101)   // bne
         begin
         Branch = 1;
         MemToReg = 1;
+        PCAdder_MuxSignal = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b011101;
+		RegDst = 0;
+		signExtendSignal=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
     
     else if(OpCode=='b000111)   // bgtz
         begin
         Branch = 1;
         MemToReg = 1;
+        PCAdder_MuxSignal = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b011110;
+		RegDst = 0;
+		signExtendSignal=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
     else if((OpCode=='b000110)&&(Instruction[20:16]=='b00000))  // blez
         begin
         Branch = 1;
         MemToReg = 1;
+        PCAdder_MuxSignal = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b011111;
+		RegDst = 0;
+		signExtendSignal=0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
- 
+    
     else if(OpCode=='b000010)   //j
         begin
         Branch = 1;
         MemToReg = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100110;
+		RegDst = 0;
+		signExtendSignal=0;
+		PCAdder_MuxSignal = 0;
+		jal_signal = 0;
+		JumpReturnSignal = 0;
         end
     
     else if((OpCode=='b000000)&&(Funct=='b001000))  // jr
         begin
         Branch = 1;
         MemToReg = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100010;
+		RegDst = 0;
+		signExtendSignal=0;
+		jal_signal = 0;
+		JumpReturnSignal = 1;
         end
     
     else if(OpCode=='b000011)   // jal
         begin
         Branch = 1;
-        MemToReg = 1;
+        MemToReg = 1; //This may need to change     
+        RegWrite = 1;
+        PCAdder_MuxSignal = 0;
+        InputB_MuxSignal = 0;
+		InputA_MuxSignal=0;
+		ALUInstruction = 'b100011;
+		RegDst = 0;
+		signExtendSignal=0;
+		Branch=1;
+		jal_signal = 1;
+		JumpReturnSignal = 0;
         end
     
-    /* End of Branch */
+    /* End of Branch Instructions*/
+    //last used number in ALU32bit is 38
+    
 	
 	end
 endmodule

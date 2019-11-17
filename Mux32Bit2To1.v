@@ -9,10 +9,11 @@ module Mux32Bit2To1(inA, inB, select, out);
     input select;
 
     always @(select, inA, inB) begin
-        if (select == 0) begin
-            out <= inA;
-        end else begin
+        if (select == 1) begin
             out <= inB;
+        end 
+        else begin
+            out <= inA;
         end
     end
 

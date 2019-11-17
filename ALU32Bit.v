@@ -26,97 +26,111 @@
 //   operations needed to support. 
 ////////////////////////////////////////////////////////////////////////////////
 
-module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
+module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, PC, Instruction, ALUResult, ALUResult2,Zero);
 
 	input [5:0] ALUInstruction; // control bits for ALU operation
 	input [31:0] A, B;
 	input [31:0] ALUlo;
+	input [31:0] Instruction;
+	input [31:0] PC;
+    output reg Zero;
+
 	input [31:0] ALUhi;
 	output reg [63:0] ALUResult;	// answer
 	reg [31:0] tempReg;
     reg [63:0] tempreg2;
     reg [63:0] ALUResultTemp1;    // answer
-    //input [31:0] A, B, ALUlo, ALUhi;
     reg [31:0] ALUResultTemp2;
     output reg [63:0] ALUResult2;  
 	//Start of Arithmetic Controls//
-    always @(/*ALUhi, ALUlo, A, B, ALUInstruction*/*)
+    always @(*)
         case (ALUInstruction)
         
-        //ADD,ADDI
+        //ADD,ADDI, LW, SW, LB, SB, LH, SH
         'b000000:                            
         begin
-        ALUResult = A+B;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult = A+B;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //SUB
         'b000001:
         begin
-        ALUResult= A-B;    
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult= A-B;    
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //AND (This is a bitwise AND)
         'b000010:
         begin
-        ALUResult=A&B;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult=A&B;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //OR (This is a bitwise OR)
         'b000011:
         begin
-        ALUResult=A|B;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult=A|B;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //NOR (This is a bitwise NOR)
         'b000100:
         begin
-        tempReg = A|B;
-        ALUResult= ~tempReg;
-        ALUResult2 = {ALUhi, ALUlo};
+            tempReg = A|B;
+            ALUResult= ~tempReg;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //XOR (This is a bitwise XOR)
         'b000101:
         begin
-        ALUResult=A^B;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult=A^B;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //SEH
         'b000110:
         begin
-        ALUResult= {{16{B[15]}}, B[15:0]}; // I think this works, but i'm not sure, will have to test.
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult= {{16{B[15]}}, B[15:0]}; // I think this works, but i'm not sure, will have to test.
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
       
    		//SLL
         'b000111: //7
         begin
-        ALUResult=B<<A;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult=B<<A;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //SRL
         'b001000: //8
         begin
-        ALUResult=B>>A;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult=B>>A;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         
         //SLT #ask
         'b001001: //9
         begin
         if($signed(A)<$signed(B))begin
-        ALUResult<=1;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult<=1;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         else begin
-        ALUResult<=0;
-        ALUResult2 = {ALUhi, ALUlo};
+            ALUResult<=0;
+            ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         end
         
@@ -126,11 +140,11 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         if(B != 'h00 )begin
             ALUResult = A;
             ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end 
         else begin
-            /*This else statement should be switched to send out the value of register rd since, if B is equal to 0, it will remain the same.
-            ALUResult2 = {ALUhi, ALUlo};*/
             ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end
         end
         
@@ -140,11 +154,11 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         if(B=='h00)begin
             ALUResult = A;
             ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end 
         else begin    
-            /*This else statement should be switched to send out the value of register rd since, if B is not equal to 0, it will remain the same.
-            ALUResult2 = {ALUhi, ALUlo};*/
             ALUResult2 = {ALUhi, ALUlo};
+            Zero=0;
         end           
         end
         
@@ -155,6 +169,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         ALUResultTemp2 = B<<(32-A);
         ALUResult = ALUResultTemp2|tempReg;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         
         //SRA
@@ -165,12 +180,14 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         ALUResultTemp2 = B >>> A; 
         ALUResult=ALUResultTemp2;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         else
         begin
         ALUResultTemp2 = B >> A; 
         ALUResult=ALUResultTemp2;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         end
         
@@ -179,6 +196,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         begin
         ALUResult = B>>>A;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         
         //SEB
@@ -186,6 +204,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         begin
         ALUResult = {{24{B[7]}}, B[7:0]};
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end 
         
         //SLTIU
@@ -195,11 +214,13 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         begin
         ALUResult = 1;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         else
         begin
         ALUResult = 0;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         end
         
@@ -210,11 +231,13 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         begin
         ALUResult = 1;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         else
         begin
         ALUResult = 0;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end
         end
         
@@ -223,12 +246,14 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         begin
         ALUResult = A * B;
         ALUResult2 = {ALUhi, ALUlo};
+        Zero=0;
         end  
 
         //MULTU
         'b010011: //19
          begin
          ALUResult2 = $unsigned(A)*$unsigned(B);
+         Zero=0;
         end
         
         //MADD
@@ -237,28 +262,27 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         tempreg2 = {ALUhi, ALUlo};
         ALUResultTemp1 = $signed(tempreg2) + $signed(A)*$signed(B);
         ALUResult2=ALUResultTemp1;
-        //ALUResult2 = {ALUhi, ALUlo} + $signed(A)*$signed(B);
+        Zero=0;
         end
         
         //MSUB
         'b010101: //21
-        begin
-        //tempreg2 = {ALUhi, ALUlo};
-        //ALUResultTemp1 = tempreg2 - $signed(A)*$signed(B);
-        //ALUResult=ALUResultTemp1;
-        
+        begin;
+        Zero=0;
         ALUResult2 = $signed({ALUhi, ALUlo}) - $signed(A)*$signed(B);
         end 
         
         //MULT
         'b010110: //22
         begin
+        Zero=0;
         ALUResult2 = $signed(A)*$signed(B);
         end  
         
         //ADDU, ADDIU
         'b010111:
         begin
+        Zero=0;
         ALUResult = $unsigned(A) + $unsigned(B);
         ALUResult2 = {ALUhi, ALUlo};
         end
@@ -266,6 +290,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         //MFHI
         'b011011: //23
         begin
+        Zero=0;
         ALUResult = ALUhi;
        // ALUResult = 64'h12;
         ALUResult2 = {ALUhi, ALUlo};
@@ -274,6 +299,7 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         //MFLO
         'b011000: //24
         begin
+        Zero=0;
         ALUResult = ALUlo;
         ALUResult2 = {ALUhi, ALUlo};
         end  
@@ -281,15 +307,152 @@ module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, ALUResult, ALUResult2);
         //MTHI
         'b011001: //25
         begin
+        Zero=0;
         ALUResult2 = {A, ALUlo};
         end  
         
         //MTLO
         'b011010: //26
         begin
+        Zero=0;
         ALUResult2 = {ALUhi, A};
         end 
         
-        endcase
+        //next part of lab
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+//BLTZ
+'b100101: //37
+begin
+if($signed(A)<0)
+begin
+Zero = 1;
+end
+else
+begin
+Zero=0;
+end
+ALUResult2 = {ALUhi, ALUlo};
+end
+
+//BEQ
+'b011100: //28
+begin
+if(A==B)
+begin
+Zero = 1;
+end
+else
+begin
+Zero = 0;
+end
+ALUResult2 = {ALUhi, ALUlo};
+end 
+
+//BNE
+'b011101: //29
+begin
+if($signed(A)!= $signed(B))
+begin
+Zero = 1;
+end
+else
+begin
+Zero = 0;
+end
+ALUResult2 = {ALUhi, ALUlo};
+end
+
+
+//BGTZ
+'b011110: //30
+begin
+if($signed(A)>0)
+begin
+Zero = 1;
+end
+else
+begin
+Zero = 0;
+end
+ALUResult2 = {ALUhi, ALUlo};
+end
+
+//BLEZ
+'b011111:  //31
+begin
+if($signed(A)<=0)
+begin
+Zero = 1;
+end
+else
+begin
+Zero=0;
+end
+ALUResult2 = {ALUhi, ALUlo};
+end
+
+//BGEZ
+'b100000: //32
+if(Instruction[20:16]==2'h01) //bgez
+    begin
+        if($signed(A)>= 0)
+        begin
+        Zero = 1;
+        end
+        else
+        begin
+        Zero = 0;
+        end
+    ALUResult2 = {ALUhi, ALUlo};
+    end
+    
+ //lui   
+'b100001: //33
+begin
+    Zero=0;
+    ALUResultTemp2 = B<<16;
+    ALUResult = {ALUResultTemp2[31:16], 16'b0000000000000000};
+    ALUResult2 = {ALUhi, ALUlo};
+end
+
+//j
+'b100110: //38
+begin
+    Zero=1;
+    ALUResult2 = {ALUhi, ALUlo};
+end
+
+//jr
+'b100010: //34
+begin
+    Zero=1;
+    ALUResult2 = {ALUhi, ALUlo};
+end
+
+//jal
+'b100011: //35
+begin
+    Zero=1;
+    ALUResult = PC + 8; 
+    ALUResult2 = {ALUhi, ALUlo};
+end
+
+/* Start of Data Memory Operations*/
+// lw, sw, lb, sb, lh, sh
+'b100100: //36
+    begin
+        ALUResult = Instruction[25:21] + Instruction[15:0];
+        ALUResult2 = {ALUhi, ALUlo};
+    end
+
+/* End of Data Memory */
+// Last used number is 38
+endcase
 endmodule
+
+        
+        
+        
+        
 

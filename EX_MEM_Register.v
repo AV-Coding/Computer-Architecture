@@ -1,16 +1,17 @@
-module EX_MEM_Register(Clock, MemWriteIn, MemReadIn, BranchIn, MemToRegIn, RegWriteIn, WriteRegisterIn, ALUResultIn, 
-                              MemWriteOut, MemReadOut, BranchOut, MemToRegOut, RegWriteOut, WriteRegisterOut, ALUResultOut);
-input Clock, RegWriteIn, MemWriteIn, MemReadIn, BranchIn, MemToRegIn;
+module EX_MEM_Register(Clock, ReadData2In, PCAddResultIn, MemWriteIn, MemReadIn, BranchIn, MemToRegIn, RegWriteIn, WriteRegisterIn, ALUResultIn, ZeroIn, 
+                              ReadData2Out, PCAddResultOut, MemWriteOut, MemReadOut, BranchOut, MemToRegOut, RegWriteOut, WriteRegisterOut, ALUResultOut, ZeroOut);
+
+input Clock, RegWriteIn, BranchIn, MemToRegIn, ZeroIn;
+input [1:0] MemWriteIn, MemReadIn;
 input [31:0] WriteRegisterIn;
 input [31:0] ALUResultIn;
+input [31:0] PCAddResultIn, ReadData2In;
 
-/*reg [31:0] WriteRegister;
-reg [31:0] ALUResult;
-reg RegWrite;*/
-
+output reg [1:0] MemWriteOut, MemReadOut;
 output reg [31:0] WriteRegisterOut;
 output reg [31:0] ALUResultOut;
-output reg RegWriteOut, MemWriteOut, MemReadOut, BranchOut, MemToRegOut;
+output reg [31:0] PCAddResultOut, ReadData2Out;
+output reg RegWriteOut, BranchOut, MemToRegOut, ZeroOut;
 
 always @(posedge Clock)
     begin
@@ -21,6 +22,9 @@ always @(posedge Clock)
     MemReadOut <= MemReadIn;
     BranchOut <= BranchIn;
     MemToRegOut <= MemToRegIn;
+    ZeroOut <= ZeroIn;
+    PCAddResultOut <= PCAddResultIn;
+    ReadData2Out <= ReadData2In;
     end
 
 /*always @(negedge Clock)
