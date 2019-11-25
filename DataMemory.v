@@ -13,22 +13,20 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     reg[31:0] memory [0:1023];
     
     initial begin
-            // Walk through the memory array and initialize each entry to i * 3. (Arbitrary for now)
-            for (i = 0; i < 1024; i = i + 1) 
-                begin
-                    if( i == 0 )
-                        begin
-                            memory[i] = 20;
-                        end
-                    else
-                        begin
-                            memory[i] = i*3;//Needs to be i*3 for this work.
-                        end
-                end  
-    
-    // ReadData[31:0]<=0;//would this setup ReadData to have its 24 most significant bits to 0?? 
-    // would this then allow us to to set the 8 least significant bits to the address... 
-    //as seen under our MemRead if statement??        
+    //$readmemh("private_data_memory.txt",memory);
+    memory[0] <= 64;
+    memory[1] <= 2;
+    memory[2] <= 3;
+    memory[3] <= 4;
+    memory[4] <= 5;
+    memory[5] <= 6;
+    memory[6] <= 200;// -56 maybe
+    memory[7] <= 2;
+    memory[8] <= 3;
+    memory[9] <= 4;
+    memory[10] <= 5;
+    memory[11] <= 6;
+      
             
         end
     
@@ -41,12 +39,28 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     
     2'b10:
     begin
-    memory[Address[11:2]] <= {memory[Address[11:2]][31:16],WriteData[15:0]}; // store half word
+    if(Address[1:0] == 'b00)begin
+    memory[Address[11:2]] <= {memory[Address[11:2]][31:16],WriteData[15:0]}; // store as least significant half
+    end
+    else if(Address[1:0] == 'b10)begin
+    memory[Address[11:2]] <= {WriteData[15:0], memory[Address[11:2]][15:0]}; // store as most significant half
+    end
     end
        
     2'b11:
     begin
-    memory[Address[11:2]] <= {memory[Address[11:2]][31:8],WriteData[7:0]}; //storebyte
+    if(Address[1:0] == 'b00)begin
+    memory[Address[11:2]] <= {memory[Address[11:2]][31:8],WriteData[7:0]}; //store as least significant byte
+    end
+    else if(Address[1:0] == 'b01)begin
+    memory[Address[11:2]] <= {memory[Address[11:2]][31:16],WriteData[7:0],memory[Address[11:2]][7:0]}; //store as middle least significant byte
+    end
+    else if(Address[1:0] == 'b10)begin
+    memory[Address[11:2]] <= {memory[Address[11:2]][31:24],WriteData[7:0],memory[Address[11:2]][15:0]}; //store as middle most significant byte
+    end
+    else if(Address[1:0] == 'b11)begin
+    memory[Address[11:2]] <= {WriteData[7:0],memory[Address[11:2]][23:0]}; //store as most significant byte
+    end
     end        
     
     endcase
@@ -68,12 +82,28 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     
     2'b10:
     begin  
-    ReadData <= {{16{memory[Address[11:2]][15]}}, memory[Address[11:2]][15:0]};//loadhalf
+    if(Address[1:0] == 'b00)begin
+    ReadData <= {{16{memory[Address[11:2]][15]}}, memory[Address[11:2]][15:0]};//load lower half
+    end
+    else if(Address[1:0] == 'b10)begin
+    ReadData <= {{16{memory[Address[11:2]][15]}}, memory[Address[11:2]][31:16]};//load upper half
+    end
     end
     
     2'b11:
-    begin  
-    ReadData <= {{24{memory[Address[11:2]][7]}}, memory[Address[11:2]][7:0]};//loadbyte
+    begin
+    if(Address[1:0] == 'b00)begin
+    ReadData <= {{24{memory[Address[11:2]][7]}}, memory[Address[11:2]][7:0]};//load least significant byte
+    end
+    else if(Address[1:0] == 'b01)begin
+    ReadData <= {{24{memory[Address[11:2]][15]}}, memory[Address[11:2]][15:8]};//load middle least significant byte
+    end
+    else if(Address[1:0] == 'b10)begin
+    ReadData <= {{24{memory[Address[11:2]][23]}}, memory[Address[11:2]][23:16]};//load middle most significant byte
+    end
+    else if(Address[1:0] == 'b11)begin
+    ReadData <= {{24{memory[Address[11:2]][31]}}, memory[Address[11:2]][31:24]};//load most significant byte
+    end
     end 
 
     endcase
