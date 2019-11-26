@@ -53,20 +53,38 @@ else if(((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rt ==
     InputAMuxSignal <= 'b01;
     InputBMuxSignal <='b00;
 end
-else if(!((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rt == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
-    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
-    WriteDataMuxSignal <= 'b10;
-    end
-    else begin
-    WriteDataMuxSignal <= 'b00;
-    end
-    if(RegisterDestination == WB_RegisterRd)begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
+else if(!((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 1)) && ((EX_Rt == WB_RegisterRd) && (WB_RegisterWrite == 1)))begin
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin // sw, sh, sb
+    if(RegisterDestination == WB_RegisterRd)begin
     InputAMuxSignal <= 'b00;
     InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b10;
     end
     else begin
     InputAMuxSignal <= 'b00;
     InputBMuxSignal <='b10;
+    WriteDataMuxSignal <= 'b00;
+    end
+    end
+    //loads
+    else if((Opcode == 'b100011 || Opcode == 'b100001 || Opcode == 'b100000))begin //lw, lh, lb
+    InputAMuxSignal <= 'b10;
+    InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b00;
+    end
+    
+    //Arithmetic
+    else begin
+    if(RegisterDestination == WB_RegisterRd)begin
+    InputAMuxSignal <='b00;
+    InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b00;
+    end
+    else begin
+    InputAMuxSignal <='b00;
+    InputBMuxSignal <='b10;
+    WriteDataMuxSignal <= 'b00;
+    end
     end
 end
 // RT dependencies
@@ -89,14 +107,14 @@ else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rs ==
     end
     if((RegisterDestination == MEM_RegisterRd) && (Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001))begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
     InputAMuxSignal <= 'b00;
-    InputBMuxSignal <='b00;
+    InputBMuxSignal <='b00; //checking
     end
     else begin
     InputAMuxSignal <='b00;
     InputBMuxSignal <='b01;
     end
 end
-else if(!((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
+else if(!((EX_Rt == MEM_RegisterRd) /*&& (MEM_RegisterWrite == 'b1)*/) && ((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
     InputAMuxSignal <='b10;
     InputBMuxSignal <='b00;
 end
