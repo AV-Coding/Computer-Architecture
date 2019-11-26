@@ -39,6 +39,8 @@ always @(Instruction) begin
 	/* Start of Arithmetic, Logical and HI/LO */
     if((OpCode == 'b000000) && (Funct == 'b100000))//ADD 
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite = 1;
         InputB_MuxSignal = 0;
 		InputA_MuxSignal=0;
@@ -52,6 +54,8 @@ always @(Instruction) begin
         end
     else if(OpCode == 'b001000)//ADDI 
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite = 1;
         InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
@@ -65,6 +69,8 @@ always @(Instruction) begin
         end
 	else if(OpCode=='b001001)//ADDIU							
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -78,6 +84,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b00000)&&(Funct=='b100010))//SUB 
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -91,6 +99,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100100))//AND
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -104,6 +114,8 @@ always @(Instruction) begin
 		end
 	else if(OpCode=='b001100)//ANDI
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -117,6 +129,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100101))//OR
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -130,6 +144,8 @@ always @(Instruction) begin
 		end
 	else if(OpCode=='b001101)//ORI
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -143,6 +159,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100111))//NOR
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -156,6 +174,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b100110))//XOR
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -169,6 +189,8 @@ always @(Instruction) begin
 		end
 	else if(OpCode=='b001110)//XORI
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -182,6 +204,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b011111)&&(Special=='b11000)&&(Funct=='b100000))//SEH
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -195,6 +219,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000000))//SLL #ask
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
@@ -208,6 +234,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010) && (Instruction[21]=='b0))//SRL #ask
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
@@ -221,6 +249,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000100))//SLLV #ask
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -234,6 +264,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b0))//SRLV #ask
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -247,6 +279,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101010))//SLT
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -260,6 +294,8 @@ always @(Instruction) begin
 		end
 	else if(OpCode=='b001010)//SLTI
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -273,6 +309,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001011))//MOVN
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -286,6 +324,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b001010))//MOVZ
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -299,6 +339,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000110) && (Instruction[6] == 'b1))//ROTRV
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -312,6 +354,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000010)&&(Instruction[21]=='b1))//ROTR
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
@@ -325,6 +369,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000011))//SRA
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=1;
@@ -338,6 +384,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b000111))//SRAV
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -351,6 +399,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b011111)&&(Funct=='b100000)&&(Special=='b10000))//SEB
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -364,6 +414,8 @@ always @(Instruction) begin
 		end	
 	else if(OpCode=='b001011)//SLTIU
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=1;
 		InputA_MuxSignal=0;
@@ -377,6 +429,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b101011))//SLTU
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -390,6 +444,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000010))//MUL
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=1;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -403,6 +459,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011001))//MULTU
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -416,6 +474,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000000))//MADD
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=0;
 		RegDst = 0;
 		InputB_MuxSignal=0;
@@ -429,6 +489,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b011100)&&(Funct=='b000100))//MSUB
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=0;
 		RegDst = 0;
 		InputB_MuxSignal=0;
@@ -442,6 +504,8 @@ always @(Instruction) begin
 		end
 	else if((OpCode=='b000000)&&(Funct=='b011000))//MULT
 		begin
+        MemRead = 0;
+        MemWrite = 0;
 		RegWrite=0;
 		InputB_MuxSignal=0;
 		InputA_MuxSignal=0;
@@ -455,6 +519,8 @@ always @(Instruction) begin
 		end
     else if((OpCode=='b000000)&&(Funct=='b100001))//ADDU
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite=1;
         InputB_MuxSignal=0;
         InputA_MuxSignal=0;
@@ -468,6 +534,8 @@ always @(Instruction) begin
         end
 	else if((OpCode=='b000000)&&(Funct=='b010000))//MFHI
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite=1;
         RegDst=1;
         InputB_MuxSignal=0;
@@ -481,6 +549,8 @@ always @(Instruction) begin
         end
     else if((OpCode=='b000000)&&(Funct=='b010010))//MFLO
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite=1;
         RegDst=1;
         InputB_MuxSignal=0;
@@ -494,6 +564,8 @@ always @(Instruction) begin
         end
     else if((OpCode=='b000000)&&(Funct=='b010001))//MTHI
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite=0;
         RegDst=1;
         InputB_MuxSignal=0;
@@ -507,6 +579,8 @@ always @(Instruction) begin
         end
     else if((OpCode=='b000000)&&(Funct=='b010011))//MTLO
         begin
+        MemRead = 0;
+        MemWrite = 0;
         RegWrite=0;
         RegDst=1;
         InputB_MuxSignal=0;
@@ -531,7 +605,7 @@ always @(Instruction) begin
         MemWrite = 0;
         MemToReg = 0;
         RegWrite = 1;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -547,7 +621,7 @@ always @(Instruction) begin
         MemWrite = 2'b01;
         MemToReg = 1;
         RegWrite = 0;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -562,7 +636,7 @@ always @(Instruction) begin
         MemWrite = 2'b11;
         MemToReg = 1;
         RegWrite = 0;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -577,7 +651,7 @@ always @(Instruction) begin
         MemWrite = 0;
         MemToReg = 0;
         RegWrite = 1;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -592,7 +666,7 @@ always @(Instruction) begin
         MemWrite = 0;
         MemToReg = 0;
         RegWrite = 1;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -608,7 +682,7 @@ always @(Instruction) begin
         MemWrite = 2'b10;
         MemToReg = 1;
         RegWrite = 0;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100100;
 		RegDst = 0;
@@ -641,14 +715,16 @@ always @(Instruction) begin
     
     else if((OpCode=='b000001)&&(Instruction[20:16]=='b00001))  // bgez
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         RegWrite = 0;
-        InputB_MuxSignal = 0;
+        InputB_MuxSignal = 1;
 		InputA_MuxSignal=0;
 		ALUInstruction = 'b100000;
 		RegDst = 0;
-		signExtendSignal=0;
+		signExtendSignal=1;
 		PCAdder_MuxSignal = 1;
 		jal_signal = 0;
 		JumpReturnSignal = 0;
@@ -656,6 +732,8 @@ always @(Instruction) begin
         
     else if((OpCode=='b000001)&&(Instruction[20:16]=='b00000))  // BLTZ
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         RegWrite = 0;
@@ -671,6 +749,8 @@ always @(Instruction) begin
     
     else if(OpCode=='b000100)   // beq
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;   
         RegWrite = 0;
@@ -686,6 +766,8 @@ always @(Instruction) begin
     
     else if(OpCode=='b000101)   // bne
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         PCAdder_MuxSignal = 1;
@@ -701,6 +783,8 @@ always @(Instruction) begin
     
     else if(OpCode=='b000111)   // bgtz
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         PCAdder_MuxSignal = 1;
@@ -715,6 +799,8 @@ always @(Instruction) begin
         end
     else if((OpCode=='b000110)&&(Instruction[20:16]=='b00000))  // blez
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         PCAdder_MuxSignal = 1;
@@ -730,6 +816,8 @@ always @(Instruction) begin
     
     else if(OpCode=='b000010)   //j
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         RegWrite = 0;
@@ -745,6 +833,8 @@ always @(Instruction) begin
     
     else if((OpCode=='b000000)&&(Funct=='b001000))  // jr
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1;
         RegWrite = 0;
@@ -759,6 +849,8 @@ always @(Instruction) begin
     
     else if(OpCode=='b000011)   // jal
         begin
+        MemRead = 0;
+        MemWrite = 0;
         Branch = 1;
         MemToReg = 1; //This may need to change     
         RegWrite = 1;

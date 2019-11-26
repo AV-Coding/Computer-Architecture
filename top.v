@@ -56,6 +56,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [31:0] EX_PCAddResult;
     wire [31:0] PCAdderJump, PCAdderBranch;
     wire [31:0] EX_RegDst_1;
+    wire [31:0] EX_WriteData;
     output wire [31:0] ALUlo;
     output wire [31:0] ALUhi;
     wire [5:0] EX_ALUInstruction;
@@ -67,7 +68,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [31:0] PCAdder_MuxResult;
     wire [31:0] InputToForwardMuxA;
     wire [31:0] InputToForwardMuxB;
-    wire [1:0] ForwardAMuxSignal, ForwardBMuxSignal;
+    wire [1:0] ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal;
     wire Zero, EX_jal_signal, EX_JumpReturnSignal;
     
     /*Memory Access Stage Wires*/
@@ -112,7 +113,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     /* End of Decode Stage*/
    
     /* Start of Execution Stage*/
-    ForwardingUnit ForwardingUnit_1(EX_RegDst_1, EX_Instruction, MEM_WriteRegister, MEM_RegWrite, MEMWB_WriteRegister, MEMWB_RegWrite, ForwardAMuxSignal, ForwardBMuxSignal);// Need to figure out how to add the mux signals to input A and input B
+    ForwardingUnit ForwardingUnit_1(EX_RegDst_1, EX_Instruction, MEM_WriteRegister, MEM_RegWrite, MEMWB_WriteRegister, MEMWB_RegWrite, ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal);// Need to figure out how to add the mux signals to input A and input B
     
     AND AND_1( EX_Branch, Zero, PCSrc);
     
@@ -134,7 +135,9 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     
     Mux32Bit3To1 InputB_ForwardMux(InputToForwardMuxB, MEM_ALUResult, MEMWB_DataResult, ForwardBMuxSignal, ALUInputB);
     
-    ALU32Bit ALU32Bit_1(EX_ALUInstruction, ALUhi, ALUlo, ALUInputA, ALUInputB, EX_PCResult, EX_Instruction, ALUResult, ALUResult2, Zero);
+    Mux32Bit3To1 WriteData_ForwardMux(EX_ReadData2, MEM_ALUResult, MEMWB_DataResult, ForwardWriteDataSignal, EX_WriteData);
+    
+    ALU32Bit ALU32Bit_1(EX_ALUInstruction, ALUhi, ALUlo, ALUInputA, ALUInputB, EX_PCResult, ALUResult, ALUResult2, Zero);
     
     HI_Register HI(Clk, ALUResult2[63:32], ALUhi);
     
@@ -144,7 +147,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     /* End of Execution Stage*/
     
     /* Start of Memory Access Stage */
-    EX_MEM_Register Execution_Mem_Access_Register(Clk, EX_ReadData2, EX_MemWrite, EX_MemRead, EX_MemToReg, EX_RegWrite, WriteRegister, ALUResult[31:0], 
+    EX_MEM_Register Execution_Mem_Access_Register(Clk, EX_WriteData, EX_MemWrite, EX_MemRead, EX_MemToReg, EX_RegWrite, WriteRegister, ALUResult[31:0], 
                                                       MEM_ReadData2, MEM_MemWrite, MEM_MemRead, MEM_MemToReg, MEM_RegWrite, MEM_WriteRegister, MEM_ALUResult);
     
     DataMemory DataMemory_1( MEM_ALUResult, MEM_ReadData2, Clk, MEM_MemWrite, MEM_MemRead, DataMemoryOut);

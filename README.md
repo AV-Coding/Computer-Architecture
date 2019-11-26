@@ -109,3 +109,15 @@
 	Hazard detection unit checks rs and rt in decode and compare to rd in WB (This will stall one clock cycle)
 	- or -
 	Create muxes to properly forward the updated value from WB to (execute or decode stage) unsure
+# 11/24/19 - Sunday
+
+## Issue
+	lw instruction on line 67 at 1350 ns is not getting right address
+	ADDI   $s2, $s2, 4						$s2 = 4
+	SW     $s4, 12($s2)						Store Mem[16(0)] with 255 ($s2 dependent)
+	LW     $s2, 12($s2)						Load Mem[16(0)] into ??$s2 = 255??
+	
+### List of Dependencies need to be fixed
+	- lw $s4, 0($s5)
+	  sw $s4, 0($s7)
+	  dependency on $s4

@@ -26,12 +26,11 @@
 //   operations needed to support. 
 ////////////////////////////////////////////////////////////////////////////////
 
-module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, PC, Instruction, ALUResult, ALUResult2,Zero);
+module ALU32Bit(ALUInstruction, ALUhi, ALUlo, A, B, PC, ALUResult, ALUResult2,Zero);
 
 	input [5:0] ALUInstruction; // control bits for ALU operation
 	input [31:0] A, B;
 	input [31:0] ALUlo;
-	input [31:0] Instruction;
 	input [31:0] PC;
     output reg Zero;
 
@@ -394,7 +393,7 @@ end
 
 //BGEZ
 'b100000: //32
-if(Instruction[20:16]==2'h01) //bgez
+if(B==2'h01) //bgez
     begin
         if($signed(A)>= 0)
         begin
@@ -442,7 +441,7 @@ end
 // lw, sw, lb, sb, lh, sh
 'b100100: //36
     begin
-        ALUResult = Instruction[25:21] + Instruction[15:0];
+        ALUResult = A + B;
         ALUResult2 = {ALUhi, ALUlo};
     end
 

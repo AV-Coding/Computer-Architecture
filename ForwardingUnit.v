@@ -20,13 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module ForwardingUnit(RegisterDestination, Instruction, MEM_RegisterRd, MEM_RegisterWrite, WB_RegisterRd, WB_RegisterWrite, InputAMuxSignal, InputBMuxSignal);
+module ForwardingUnit(RegisterDestination, Instruction, MEM_RegisterRd, MEM_RegisterWrite, WB_RegisterRd, WB_RegisterWrite, InputAMuxSignal, InputBMuxSignal, WriteDataMuxSignal);
 input [31:0] RegisterDestination;
 input [31:0]Instruction;
 input [31:0]MEM_RegisterRd;
 input [31:0]WB_RegisterRd;
 input MEM_RegisterWrite, WB_RegisterWrite;
-output reg [1:0] InputAMuxSignal, InputBMuxSignal;
+output reg [1:0] InputAMuxSignal, InputBMuxSignal, WriteDataMuxSignal;
 reg [31:0]EX_Rt; // Bits 20-16
 reg [31:0]EX_Rs; // Bits 25-21
 reg [5:0]Opcode;
@@ -40,6 +40,12 @@ Function <= Instruction[5:0];
 
 /*Checks if rs regsiter rs equal to register desination in Memory stage*/
 if(((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rt == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
+    WriteDataMuxSignal <= 'b10;
+    end
+    else begin
+    WriteDataMuxSignal <= 'b00;
+    end
     InputAMuxSignal <= 'b01;
     InputBMuxSignal <= 'b10;
 end
@@ -48,6 +54,12 @@ else if(((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rt ==
     InputBMuxSignal <='b00;
 end
 else if(!((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rt == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
+    WriteDataMuxSignal <= 'b10;
+    end
+    else begin
+    WriteDataMuxSignal <= 'b00;
+    end
     if(RegisterDestination == WB_RegisterRd)begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
     InputAMuxSignal <= 'b00;
     InputBMuxSignal <='b00;
@@ -57,13 +69,25 @@ else if(!((EX_Rs == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rt ==
     InputBMuxSignal <='b10;
     end
 end
-/***/
+// RT dependencies
 else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
+    WriteDataMuxSignal <= 'b01;
+    end
+    else begin
+    WriteDataMuxSignal <= 'b00;
+    end
     InputAMuxSignal <='b10;
     InputBMuxSignal <='b01;
 end
 else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
-    if(RegisterDestination == MEM_RegisterRd)begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
+    WriteDataMuxSignal <= 'b01;
+    end
+    else begin
+    WriteDataMuxSignal <= 'b00;
+    end
+    if((RegisterDestination == MEM_RegisterRd) && (Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001))begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
     InputAMuxSignal <= 'b00;
     InputBMuxSignal <='b00;
     end
@@ -78,6 +102,7 @@ else if(!((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rs ==
 end
 /**/
 else begin
+    WriteDataMuxSignal <= 'b00;
     InputAMuxSignal <= 'b00;
     InputBMuxSignal <= 'b00;
 end
