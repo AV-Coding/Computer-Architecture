@@ -37,7 +37,21 @@ always @(Instruction) begin
 	Funct=Instruction[5:0];
 	
 	/* Start of Arithmetic, Logical and HI/LO */
-    if((OpCode == 'b000000) && (Funct == 'b100000))//ADD 
+	if(Instruction == 32'b00000000000000000000000000000000)begin
+	    MemRead = 0;
+        MemWrite = 0;
+        Branch = 0;
+        MemToReg = 1;
+        RegWrite = 0;
+        InputB_MuxSignal = 0;
+        InputA_MuxSignal=0;
+        ALUInstruction = 'b000000;
+        RegDst = 0;
+        signExtendSignal=0;
+        jal_signal = 0;
+        JumpReturnSignal = 0;
+	end
+    else if((OpCode == 'b000000) && (Funct == 'b100000))//ADD 
         begin
         MemRead = 0;
         MemWrite = 0;

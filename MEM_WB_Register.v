@@ -1,33 +1,33 @@
-module MEM_WB_Register(Clock, MemToRegIn, RegWriteIn, WriteRegisterIn, ALUResultIn, DataMemoryIn,
-                              MemToRegOut, RegWriteOut, WriteRegisterOut, ALUResultOut, DataMemoryOut);
-input Clock, RegWriteIn, MemToRegIn;
+module MEM_WB_Register(Clock, MEM_WB_Signal, InstructionIn,MemToRegIn, RegWriteIn, WriteRegisterIn, ALUResultIn, DataMemoryIn,
+                                            InstructionOut,MemToRegOut, RegWriteOut, WriteRegisterOut, ALUResultOut, DataMemoryOut);
+input Clock, RegWriteIn, MemToRegIn, MEM_WB_Signal;
 input [31:0] WriteRegisterIn;
 input [31:0] ALUResultIn;
 input [31:0] DataMemoryIn;
-
-/*reg [31:0] WriteRegister;
-reg [31:0] ALUResult;
-reg RegWrite;*/
+input [31:0] InstructionIn;
 
 output reg [31:0] WriteRegisterOut;
 output reg [31:0] ALUResultOut;
 output reg [31:0] DataMemoryOut;
 output reg RegWriteOut, MemToRegOut;
+output reg [31:0] InstructionOut;
 
 always @(posedge Clock)
-    begin
-    WriteRegisterOut <= WriteRegisterIn;
-    ALUResultOut <= ALUResultIn;
-    RegWriteOut <= RegWriteIn;
-    MemToRegOut <= MemToRegIn;
-    DataMemoryOut <= DataMemoryIn;
+    if(MEM_WB_Signal)begin
+    WriteRegisterOut = 0;
+    ALUResultOut = 0;
+    RegWriteOut = 0;
+    MemToRegOut = 1;
+    DataMemoryOut = 0;
+    InstructionOut = 0;
     end
-
-/*always @(negedge Clock)
-    begin
-    WriteRegisterOut = WriteRegister;
-    ALUResultOut = ALUResult;
-    RegWriteOut = RegWrite;
-    end*/
+    else begin
+    WriteRegisterOut = WriteRegisterIn;
+    ALUResultOut = ALUResultIn;
+    RegWriteOut = RegWriteIn;
+    MemToRegOut = MemToRegIn;
+    DataMemoryOut = DataMemoryIn;
+    InstructionOut = InstructionIn;
+    end
 
 endmodule

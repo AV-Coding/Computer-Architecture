@@ -32,8 +32,11 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     
     /*Instruction Fetch Unit Stage Wires*/
     output wire [31:0] PCResult;
+    wire PC_Write;
     wire [31:0] PCAddResult;
     wire [31:0] Instruction;
+    
+    wire IF_ID_Signal;
     
     /*Instrucion Decode Stage Wires*/
     wire [31:0] RegDst_1;
@@ -47,6 +50,8 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [5:0] ALUInstruction;
     wire RegWrite, RegDst, InputA_MuxSignal, InputB_MuxSignal, SignExtendSignal, Branch, MemToReg, PCAdder_MuxSignal, jal_signal, JumpReturnSignal;
     wire [1:0] MemRead, MemWrite;
+    
+    wire ID_EX_Signal;
     
     /*Execution Stage Wires*/
     wire [31:0] EX_ReadData1;
@@ -71,6 +76,8 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [1:0] ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal;
     wire Zero, EX_jal_signal, EX_JumpReturnSignal;
     
+    wire EX_MEM_Signal;
+    
     /*Memory Access Stage Wires*/
     wire [31:0] MEM_WriteRegister;
     wire [31:0] MEM_ALUResult, MEM_ReadData2;
@@ -78,24 +85,30 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [31:0] MEMWB_ALUResult;
     wire MEM_RegWrite, MEM_MemToReg, PCSrc;
     wire [31:0] DataMemoryOut;
+    wire [31:0] MEM_Instruction;
+    
+    wire MEM_WB_Signal;
     
     /*Memory Write Back Stage*/
     wire [31:0] MEMWB_WriteRegister, MEMWB_DataMemoryOut;
     wire MEMWB_RegWrite, MEMWB_MemToReg;
+    wire [31:0] WB_Instruction;
     
     /* Start of Instruction Fetch Stage*/
     PCAdder PCAdder_1(PCResult, PCAddResult);
     
     Mux32Bit2To1 NextAddress( PCAddResult, EX_PCAddResult, PCSrc, Address );
         
-    ProgramCounter ProgramCounter_1(Address, Reset, Clk, PCResult);
+    ProgramCounter ProgramCounter_1(PC_Write, Address, Reset, Clk, PCResult);
         
     InstructionMemory InstructionMemory_1(PCResult, Instruction);
   
-    IF_ID_Register Instruction_Fetch_Decode_Register(Clk, Instruction, PCAddResult, ID_Instruction, ID_PCResult);
+    IF_ID_Register Instruction_Fetch_Decode_Register(Clk, IF_ID_Signal, Instruction, PCAddResult, ID_Instruction, ID_PCResult);
     /* End of Instruction Fetch Stage*/
     
     /* Decode Stage*/  
+    DataHazard DataHazardUnit(PCSrc, Instruction, ID_Instruction, EX_Instruction, MEM_WriteRegister, MEMWB_WriteRegister, MEMWB_RegWrite, MEM_RegWrite, IF_ID_Signal, ID_EX_Signal, EX_MEM_Signal, MEM_WB_Signal, PC_Write);
+    
     RegisterFile RegisterFile_1( Clk, ID_Instruction[25:21], ID_Instruction[20:16], MEMWB_WriteRegister, MEMWB_DataResult, MEMWB_RegWrite, ReadData1, ReadData2); 
     
     SignExtension SignExtension_1(ID_Instruction[15:0], ArithmeticSignExtendOut);
@@ -108,8 +121,8 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     
     Mux5Bit2To1 Mux5Bit2To1_1(ID_Instruction[20:16], ID_Instruction[15:11], RegDst, RegDst_1 ); //Moves this into Execute Stages  
     
-    ID_EX_Register Instruction_Decode_Execute_Register(Clk, JumpReturnSignal, jal_signal, PCAdder_MuxSignal, ID_Instruction, RegWrite, ReadData1, ReadData2, SignExtendOut, ALUInstruction, ID_PCResult, InputA_MuxSignal, InputB_MuxSignal, RegDst_1, MemWrite, MemRead, Branch, MemToReg,
-                                                          EX_JumpReturnSignal , EX_jal_signal, EX_PCAdder_MuxSignal, EX_Instruction, EX_RegWrite, EX_ReadData1, EX_ReadData2, EX_SignExtendOut, EX_ALUInstruction, EX_PCResult, EX_InputA_MuxSignal, EX_InputB_MuxSignal, EX_RegDst_1, EX_MemWrite, EX_MemRead, EX_Branch, EX_MemToReg);
+    ID_EX_Register Instruction_Decode_Execute_Register(Clk, ID_EX_Signal, JumpReturnSignal, jal_signal, PCAdder_MuxSignal, ID_Instruction, RegWrite, ReadData1, ReadData2, SignExtendOut, ALUInstruction, ID_PCResult, InputA_MuxSignal, InputB_MuxSignal, RegDst_1, MemWrite, MemRead, Branch, MemToReg,
+                                                                        EX_JumpReturnSignal , EX_jal_signal, EX_PCAdder_MuxSignal, EX_Instruction, EX_RegWrite, EX_ReadData1, EX_ReadData2, EX_SignExtendOut, EX_ALUInstruction, EX_PCResult, EX_InputA_MuxSignal, EX_InputB_MuxSignal, EX_RegDst_1, EX_MemWrite, EX_MemRead, EX_Branch, EX_MemToReg);
     /* End of Decode Stage*/
    
     /* Start of Execution Stage*/
@@ -147,16 +160,16 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     /* End of Execution Stage*/
     
     /* Start of Memory Access Stage */
-    EX_MEM_Register Execution_Mem_Access_Register(Clk, EX_WriteData, EX_MemWrite, EX_MemRead, EX_MemToReg, EX_RegWrite, WriteRegister, ALUResult[31:0], 
-                                                      MEM_ReadData2, MEM_MemWrite, MEM_MemRead, MEM_MemToReg, MEM_RegWrite, MEM_WriteRegister, MEM_ALUResult);
+    EX_MEM_Register Execution_Mem_Access_Register(Clk, EX_MEM_Signal, EX_Instruction,EX_WriteData, EX_MemWrite, EX_MemRead, EX_MemToReg, EX_RegWrite, WriteRegister, ALUResult[31:0], 
+                                                                      MEM_Instruction,  MEM_ReadData2, MEM_MemWrite, MEM_MemRead, MEM_MemToReg, MEM_RegWrite, MEM_WriteRegister, MEM_ALUResult);
     
     DataMemory DataMemory_1( MEM_ALUResult, MEM_ReadData2, Clk, MEM_MemWrite, MEM_MemRead, DataMemoryOut);
     /* End of Memory Access Stage */                                                   
     
     
     /* Start of Memory Writeback stage */
-    MEM_WB_Register Memory_Writeback_Register(Clk, MEM_MemToReg, MEM_RegWrite, MEM_WriteRegister, MEM_ALUResult, DataMemoryOut,
-                                                   MEMWB_MemToReg, MEMWB_RegWrite, MEMWB_WriteRegister, MEMWB_ALUResult, MEMWB_DataMemoryOut);
+    MEM_WB_Register Memory_Writeback_Register(Clk, MEM_WB_Signal, MEM_Instruction,MEM_MemToReg, MEM_RegWrite, MEM_WriteRegister, MEM_ALUResult, DataMemoryOut,
+                                                                 WB_Instruction, MEMWB_MemToReg, MEMWB_RegWrite, MEMWB_WriteRegister, MEMWB_ALUResult, MEMWB_DataMemoryOut);
                                                    
     Mux32Bit2To1 DataResult_Mux( MEMWB_DataMemoryOut, MEMWB_ALUResult, MEMWB_MemToReg, MEMWB_DataResult);
     /* End of Memory Writeback stage */

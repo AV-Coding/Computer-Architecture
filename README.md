@@ -117,6 +117,32 @@
 	SW     $s4, 12($s2)						Store Mem[16(0)] with 255 ($s2 dependent)
 	LW     $s2, 12($s2)						Load Mem[16(0)] into ??$s2 = 255??
 	
+# 11/24/19 - Tuesday
+
+## Goals
+	- [x] Continue writing for data hazard
+		- [x] add in wires from writeback stage `WB.rd`
+		- [x] pass the following instructions:
+		addi $s2, $s2, 4
+		addi $s2, $s2, 4
+		sw $s4, 16($s2)
+		lw $s2, 16($s2)
+		
+## Issue
+
+# 11/27/19 - Wednesday
+
+## Goals
+	- [x] sll instruction not working, fix it.
+## Issue
+
+# 11/27/19 - Thursday
+
+## Goals
+	- [ ] 
+## Issue
+	- at 590 ns, line 27 is repeating twice, then line 28 repeats twice for some reason.
+	
 ### List of Dependencies need to be fixed
 	- lw $s4, 0($s5)
 	  sw $s4, 0($s7)

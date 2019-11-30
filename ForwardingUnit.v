@@ -99,7 +99,38 @@ else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && ((EX_Rs == 
     InputBMuxSignal <='b01;
 end
 else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
-    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
+    if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin // sw, sh, sb
+    if(RegisterDestination == MEM_RegisterRd)begin
+    InputAMuxSignal <= 'b00;
+    InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b01;
+    end
+    else begin
+    InputAMuxSignal <= 'b00;
+    InputBMuxSignal <='b01;
+    WriteDataMuxSignal <= 'b00;
+    end
+    end
+    //loads
+    else if((Opcode == 'b100011 || Opcode == 'b100001 || Opcode == 'b100000))begin //lw, lh, lb
+    InputAMuxSignal <= 'b00;
+    InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b00;
+    end
+    //Arithmetic
+    else begin
+    if(RegisterDestination == MEM_RegisterRd)begin
+    InputAMuxSignal <='b00;
+    InputBMuxSignal <='b00;
+    WriteDataMuxSignal <= 'b00;
+    end
+    else begin
+    InputAMuxSignal <='b00;
+    InputBMuxSignal <='b01;
+    WriteDataMuxSignal <= 'b00;
+    end
+    end
+    /*if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
     WriteDataMuxSignal <= 'b01;
     end
     else begin
@@ -112,7 +143,7 @@ else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rs ==
     else begin
     InputAMuxSignal <='b00;
     InputBMuxSignal <='b01;
-    end
+    end*/
 end
 else if(!((EX_Rt == MEM_RegisterRd) /*&& (MEM_RegisterWrite == 'b1)*/) && ((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
     InputAMuxSignal <='b10;

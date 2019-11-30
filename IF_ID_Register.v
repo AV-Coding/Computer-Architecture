@@ -20,18 +20,25 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module IF_ID_Register(Clock, InstructionIn, PCResultIn, InstructionOut, PCResultOut);
-input Clock;
+module IF_ID_Register(Clock, IF_ID_Signal, InstructionIn, PCResultIn, InstructionOut, PCResultOut);
+input Clock, IF_ID_Signal;
 input [31:0] InstructionIn;
 input [31:0] PCResultIn;
+reg [31:0]PreviousInstruction;
+reg [31:0]PreviousPCResultOut;
 output reg [31:0] InstructionOut;
 output reg [31:0] PCResultOut;
-/*reg [31:0] Instruction;
-reg [31:0] PCResult;*/
 
 always @( posedge Clock)
     begin
-    InstructionOut <= InstructionIn;
-    PCResultOut <= PCResultIn;
+    if(IF_ID_Signal)begin
+    InstructionOut = PreviousInstruction;
+    PCResultOut = PreviousPCResultOut;
+    end
+    else
+    PreviousInstruction = InstructionOut;
+    InstructionOut = InstructionIn;
+    PreviousPCResultOut = PCResultOut;
+    PCResultOut = PCResultIn;
     end
 endmodule
