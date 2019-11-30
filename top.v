@@ -36,7 +36,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [31:0] PCAddResult;
     wire [31:0] Instruction;
     
-    wire IF_ID_Signal;
+    wire [1:0]IF_ID_Signal;
     
     /*Instrucion Decode Stage Wires*/
     wire [31:0] RegDst_1;

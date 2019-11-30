@@ -21,7 +21,8 @@
 
 
 module IF_ID_Register(Clock, IF_ID_Signal, InstructionIn, PCResultIn, InstructionOut, PCResultOut);
-input Clock, IF_ID_Signal;
+input Clock;
+input [1:0] IF_ID_Signal;
 input [31:0] InstructionIn;
 input [31:0] PCResultIn;
 reg [31:0]PreviousInstruction;
@@ -31,14 +32,19 @@ output reg [31:0] PCResultOut;
 
 always @( posedge Clock)
     begin
-    if(IF_ID_Signal)begin
+    if(IF_ID_Signal == 1)begin //This is for stalling
     InstructionOut = PreviousInstruction;
     PCResultOut = PreviousPCResultOut;
     end
-    else
+    else if(IF_ID_Signal == 2)begin //This is for flushing
+    InstructionOut = 0;
+    PCResultOut = 0;
+    end
+    else begin
     PreviousInstruction = InstructionOut;
     InstructionOut = InstructionIn;
     PreviousPCResultOut = PCResultOut;
     PCResultOut = PCResultIn;
+    end
     end
 endmodule
