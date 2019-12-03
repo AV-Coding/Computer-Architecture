@@ -25,7 +25,8 @@
 module top_tb();
 
 reg Reset, Clk;
-wire [31:0] Result, PC, LO, HI, ADDRESS, Instruction; 
+wire [31:0] Result, PC, LO, HI; 
+wire RegWrite;
 
 top Test(
     .Clk(Clk),
@@ -34,8 +35,7 @@ top Test(
     .PCResult(PC),
     .ALUlo(LO),
     .ALUhi(HI),
-    .Address(ADDRESS),
-    .EX_Instruction(Instruction)
+    .MEMWB_RegWrite(RegWrite)
 );
 
 initial begin

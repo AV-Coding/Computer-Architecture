@@ -147,3 +147,68 @@
 	- lw $s4, 0($s5)
 	  sw $s4, 0($s7)
 	  dependency on $s4
+
+# 11/30/19 - Saturday
+
+## Goals
+	- [ ] Fix load words dependencies,
+		- [ ] all *Register_Signal* should be made 2 bits wide
+		- [ ] all registers should be made to handle flushing and stalling
+		- [ ] Have 1 be a stall
+		- [ ] Have 2 be a flush
+	
+	- [ ] Pass testcase on lines 173 and 174, this is a lw dependency
+		- [ ] This is at 3410 ns
+## Issue
+	- at 590 ns, line 27 is repeating twice, then line 28 repeats twice for some reason.
+	
+# 12/01/19 - Sunday
+
+## Goals
+	- [ ] Will need to checks for lw.
+		- [ ] One to compare from the *Memory* stage to the *Execute* stage.
+		- [ ] One to compare from the *Memory* to the *Instruction Fetch* stage??
+			- Current logic may already support this
+	
+	- [ ] Pass testcase on lines 173 and 174, this is a lw dependency
+		- [ ] This is at 3410 ns
+	
+	- [ ] Left off at 5480 ns on line 273
+## Issue
+	- at 590 ns, line 27 is repeating twice, then line 28 repeats twice for some reason.
+	
+# 12/02/19 - Monday
+
+## Notes
+	- Last day of regular lab session
+	- Proper office hours this week
+	- Demo starts on Wednesday
+	- For those looking to compete, sign up by Friday this week.
+	
+## Phase 1
+	-
+	
+## Phase 2
+	- Using vbsme on FPGA
+	- Using vbsme for Instruction Memory
+	- Procedure will be released on d2l
+	- Using 7 segment display
+	- Phase 2 demonstration will start Monday and there will still be some on Wednesday
+	- Due on Monday at 2:00
+	- takes 2 16 bit for 7 segment display
+	- 8 lsb off x, 8 lsb off y
+	- 16 from the min SAD
+	- You discard the MSB's from the x and y coordinates
+
+## Questions?
+	- When does Phase 2 need to be submitted?
+	
+# 12/03/19 - Tuesday
+
+## Goals
+	- set register 29 to 32000 in registerfile
+	- set DataMemory size 0:8000
+		- reg [31:0] memory[0:8000]
+## Issue
+	- at 590 ns, line 27 is repeating twice, then line 28 repeats twice for some reason.
+	

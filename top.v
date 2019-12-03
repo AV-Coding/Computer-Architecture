@@ -20,15 +20,15 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Instruction);
+module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, MEMWB_RegWrite);
     input Clk, Reset;
     output wire [31:0] MEMWB_DataResult;
-    output wire [31:0] EX_Instruction;
+    output wire MEMWB_RegWrite;
     wire [63:0] ALUResult;
     wire [63:0] ALUResult2;
     wire [31:0] ALUInputA;
     wire [31:0] ALUInputB;
-    output wire [31:0] Address;
+    wire [31:0] Address;
     
     /*Instruction Fetch Unit Stage Wires*/
     output wire [31:0] PCResult;
@@ -51,7 +51,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire RegWrite, RegDst, InputA_MuxSignal, InputB_MuxSignal, SignExtendSignal, Branch, MemToReg, PCAdder_MuxSignal, jal_signal, JumpReturnSignal;
     wire [1:0] MemRead, MemWrite;
     
-    wire ID_EX_Signal;
+    wire [1:0]ID_EX_Signal;
     
     /*Execution Stage Wires*/
     wire [31:0] EX_ReadData1;
@@ -59,6 +59,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [31:0] EX_SignExtendOut;
     wire [31:0] EX_PCResult;
     wire [31:0] EX_PCAddResult;
+    wire [31:0] EX_Instruction;
     wire [31:0] PCAdderJump, PCAdderBranch;
     wire [31:0] EX_RegDst_1;
     wire [31:0] EX_WriteData;
@@ -76,7 +77,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     wire [1:0] ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal;
     wire Zero, EX_jal_signal, EX_JumpReturnSignal;
     
-    wire EX_MEM_Signal;
+    wire [1:0]EX_MEM_Signal;
     
     /*Memory Access Stage Wires*/
     wire [31:0] MEM_WriteRegister;
@@ -91,7 +92,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     
     /*Memory Write Back Stage*/
     wire [31:0] MEMWB_WriteRegister, MEMWB_DataMemoryOut;
-    wire MEMWB_RegWrite, MEMWB_MemToReg;
+    wire MEMWB_MemToReg;
     wire [31:0] WB_Instruction;
     
     /* Start of Instruction Fetch Stage*/
@@ -107,7 +108,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     /* End of Instruction Fetch Stage*/
     
     /* Decode Stage*/  
-    DataHazard DataHazardUnit(PCSrc, Instruction, ID_Instruction, EX_Instruction, MEM_WriteRegister, MEMWB_WriteRegister, MEMWB_RegWrite, MEM_RegWrite, IF_ID_Signal, ID_EX_Signal, EX_MEM_Signal, MEM_WB_Signal, PC_Write);
+    DataHazard DataHazardUnit(PCSrc, Instruction, ID_Instruction, EX_Instruction, MEM_WriteRegister, MEMWB_WriteRegister, MEMWB_RegWrite, MEM_RegWrite, MEM_MemRead, IF_ID_Signal, ID_EX_Signal, EX_MEM_Signal, MEM_WB_Signal, PC_Write);
     
     RegisterFile RegisterFile_1( Clk, ID_Instruction[25:21], ID_Instruction[20:16], MEMWB_WriteRegister, MEMWB_DataResult, MEMWB_RegWrite, ReadData1, ReadData2); 
     
@@ -126,7 +127,7 @@ module top(Clk, Reset, PCResult, MEMWB_DataResult, ALUhi, ALUlo, Address, EX_Ins
     /* End of Decode Stage*/
    
     /* Start of Execution Stage*/
-    ForwardingUnit ForwardingUnit_1(EX_RegDst_1, EX_Instruction, MEM_WriteRegister, MEM_RegWrite, MEMWB_WriteRegister, MEMWB_RegWrite, ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal);// Need to figure out how to add the mux signals to input A and input B
+    ForwardingUnit ForwardingUnit_1(EX_RegDst_1, EX_RegWrite, EX_Instruction, MEM_WriteRegister, MEM_RegWrite, MEMWB_WriteRegister, MEMWB_RegWrite, ForwardAMuxSignal, ForwardBMuxSignal, ForwardWriteDataSignal);// Need to figure out how to add the mux signals to input A and input B
     
     AND AND_1( EX_Branch, Zero, PCSrc);
     

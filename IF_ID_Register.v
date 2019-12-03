@@ -41,10 +41,14 @@ always @( posedge Clock)
     PCResultOut = 0;
     end
     else begin
-    PreviousInstruction = InstructionOut;
+    //PreviousInstruction = InstructionOut;
     InstructionOut = InstructionIn;
-    PreviousPCResultOut = PCResultOut;
+    //PreviousPCResultOut = PCResultOut;
     PCResultOut = PCResultIn;
     end
+    end
+always @( negedge Clock) begin
+    PreviousInstruction = InstructionOut;
+    PreviousPCResultOut = PCResultOut;
     end
 endmodule

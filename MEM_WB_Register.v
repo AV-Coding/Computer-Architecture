@@ -1,6 +1,7 @@
 module MEM_WB_Register(Clock, MEM_WB_Signal, InstructionIn,MemToRegIn, RegWriteIn, WriteRegisterIn, ALUResultIn, DataMemoryIn,
                                             InstructionOut,MemToRegOut, RegWriteOut, WriteRegisterOut, ALUResultOut, DataMemoryOut);
-input Clock, RegWriteIn, MemToRegIn, MEM_WB_Signal;
+input Clock, RegWriteIn, MemToRegIn;
+input MEM_WB_Signal;
 input [31:0] WriteRegisterIn;
 input [31:0] ALUResultIn;
 input [31:0] DataMemoryIn;
@@ -12,8 +13,8 @@ output reg [31:0] DataMemoryOut;
 output reg RegWriteOut, MemToRegOut;
 output reg [31:0] InstructionOut;
 
-always @(posedge Clock)
-    if(MEM_WB_Signal)begin
+always @(posedge Clock)begin
+    if(MEM_WB_Signal == 1)begin
     WriteRegisterOut = 0;
     ALUResultOut = 0;
     RegWriteOut = 0;
@@ -28,6 +29,7 @@ always @(posedge Clock)
     MemToRegOut = MemToRegIn;
     DataMemoryOut = DataMemoryIn;
     InstructionOut = InstructionIn;
+    end
     end
 
 endmodule

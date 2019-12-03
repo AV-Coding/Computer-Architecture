@@ -433,7 +433,7 @@ end
 'b100011: //35
 begin
     Zero=1;
-    ALUResult = PC + 8; 
+    ALUResult = PC; 
     ALUResult2 = {ALUhi, ALUlo};
 end
 
