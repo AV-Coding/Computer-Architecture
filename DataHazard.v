@@ -46,7 +46,7 @@ module DataHazard(PCSrc, IF_Instruction, ID_Instruction, EX_Instruction, MEM_Rd,
         PC_Write = 0;
 	end
 	/**/
-    else if((MemRead != 0) && (EX_Rt == MEM_Rd) && (EX_Opcode=='b101011 || EX_Opcode=='b101000 || EX_Opcode=='b101001 || EX_Opcode=='b000000 || EX_Opcode=='b011100 || EX_Opcode=='b011111))begin
+    else if((MemRead != 0) && (EX_Rt == MEM_Rd) && (EX_Opcode=='b101011 || EX_Opcode=='b101000 || EX_Opcode=='b101001 || EX_Opcode=='b000000 || EX_Opcode=='b011100 || EX_Opcode=='b011111 || EX_Opcode=='b000100||EX_Opcode=='b000101))begin
        IF_ID_Signal = 1; // Stalling IF_ID register //This is stalling correctly because the PCWrite is sending the same instruction
        ID_EX_Signal = 1; // Stalling ID_EX register
        EX_MEM_Signal = 'b10;

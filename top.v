@@ -5,6 +5,8 @@
 // 
 // Ariel Villasenor: 50%
 // Ajay Katoch: 50%
+//Branch Decision and resolution stage: EX Stage is where we are making our branch decision
+
 // Create Date: 
 // Design Name: 
 // Module Name: top

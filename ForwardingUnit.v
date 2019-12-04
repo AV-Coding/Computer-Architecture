@@ -112,38 +112,24 @@ else if(((EX_Rt == MEM_RegisterRd) && (MEM_RegisterWrite == 'b1)) && !((EX_Rs ==
         end
     end
     //loads
-    else if((Opcode == 'b100011 || Opcode == 'b100001 || Opcode == 'b100000))begin //lw, lh, lb
+    else if(!(Opcode=='b000000 || Opcode=='b011100 || Opcode=='b011111 || Opcode=='b000101 || Opcode=='b000100))begin //if not rd, rs, rt or rs, rt (arithmetic, beq, bne)
         InputAMuxSignal <= 'b00;
         InputBMuxSignal <='b00;
         WriteDataMuxSignal <= 'b00;
     end
     //Arithmetic
-    else begin
+    /*else begin
     if((RegisterDestination == MEM_RegisterRd) && (EX_RegisterWrite == 1))begin //This should work, may need to include second RegDst signal that is used for JAL
     InputAMuxSignal <='b00;
     InputBMuxSignal <='b00;
     WriteDataMuxSignal <= 'b00;
-    end
-    else begin
-    InputAMuxSignal <='b00;
-    InputBMuxSignal <='b01;
-    WriteDataMuxSignal <= 'b00;
-    end
-    end
-    /*if(Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001)begin
-    WriteDataMuxSignal <= 'b01;
-    end
-    else begin
-    WriteDataMuxSignal <= 'b00;
-    end
-    if((RegisterDestination == MEM_RegisterRd) && (Opcode=='b101011 || Opcode=='b101000 || Opcode=='b101001))begin // May need to check if RegWrite == 1, What would happen with a lw, or sw in this situation
-    InputAMuxSignal <= 'b00;
-    InputBMuxSignal <='b00; //checking
-    end
-    else begin
-    InputAMuxSignal <='b00;
-    InputBMuxSignal <='b01;
     end*/
+    else begin
+    InputAMuxSignal <='b00;
+    InputBMuxSignal <='b01;
+    WriteDataMuxSignal <= 'b00;
+    end
+    //end
 end
 else if(!((EX_Rt == MEM_RegisterRd) /*&& (MEM_RegisterWrite == 'b1)*/) && ((EX_Rs == WB_RegisterRd) && (WB_RegisterWrite == 'b1)))begin
     InputAMuxSignal <='b10;

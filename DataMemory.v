@@ -13,13 +13,7 @@ module DataMemory(Address, WriteData, Clk, MemWrite, MemRead, ReadData);
     reg[31:0] memory [0:1023];
     
     initial begin
-    $readmemh("lab15-18testcasesDataMemory.txt",memory);
-//    memory[0] <= 32'h0;
-//    memory[1] <= 32'h1;
-//    memory[2] <= 32'h2;
-//    memory[3] <= 32'h3;
-//    memory[4] <= 32'h4;
-//    memory[5] <= -32'h1;
+    //$readmemh("lab15-18testcasesDataMemory.txt",memory);
         end
     
     always @(posedge Clk) begin
